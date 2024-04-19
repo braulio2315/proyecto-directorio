@@ -1,0 +1,226 @@
+import 'dart:io';
+
+// Clase abstracta Perfil
+abstract class Perfil {
+  // Propiedades protegidas
+  String _nombre;
+  String _apellidoPaterno;
+  String _apellidoMaterno;
+  int id;
+
+  // Constructor de la clase Perfil
+  Perfil(this._nombre, this._apellidoPaterno, this._apellidoMaterno, this.id);
+
+  // Setter para la propiedad nombre
+  set nombre(String nombre) => _nombre = nombre;
+
+  // Setter para la propiedad apellidoPaterno
+  set apellidoPaterno(String apellidoPaterno) =>
+      _apellidoPaterno = apellidoPaterno;
+
+  // Setter para la propiedad apellidoMaterno
+  set apellidoMaterno(String apellidoMaterno) =>
+      _apellidoMaterno = apellidoMaterno;
+
+  // Método para mostrar la información del perfil
+  void mostrarInformacion() {
+    stdout.write("Id: $id\nNombre: $_nombre $_apellidoPaterno $_apellidoMaterno\n");
+  }
+}
+
+// Clase Instructor que hereda de Perfil
+class Instructor extends Perfil {
+  static List<Instructor> _instructores = [];
+  String _materia;
+  String _facultad;
+
+  // Constructor de la clase Instructor
+  Instructor(String nombre, String apellidoPaterno, String apellidoMaterno, int id, this._materia, this._facultad)
+      : super(nombre, apellidoPaterno, apellidoMaterno, id) {
+    _instructores.add(this);
+  }
+
+  // Método para mostrar la información del instructor (sobrescribe el método de la clase base)
+  @override
+  void mostrarInformacion() {
+    super.mostrarInformacion();
+    stdout.write("Materia: $_materia\nFacultad: $_facultad");
+  }
+
+  // Método estático para buscar un instructor por su ID
+  static Instructor? buscarInstructor(int id) {
+    for (var instructor in _instructores) {
+      if (instructor.id == id) {
+        return instructor;
+      }
+    }
+    return null;
+  }
+
+  // Método estático para eliminar un instructor por su ID
+  static void eliminarInstructor(int id) {
+    _instructores.removeWhere((instructor) => instructor.id == id);
+  }
+
+  // Método estático para mostrar todos los instructores
+  static void mostrarInstructores() {
+    for (var instructor in _instructores) {
+      instructor.mostrarInformacion();
+      stdout.write("\n");
+    }
+  }
+
+  // Método estático para editar un instructor por su ID
+  static void editarInstructor(int id) {
+    var instructor = buscarInstructor(id);
+    if (instructor != null) {
+      stdout.write("Nombre: ");
+      instructor.nombre = stdin.readLineSync()!;
+      stdout.write("Apellido Paterno: ");
+      instructor.apellidoPaterno = stdin.readLineSync()!;
+      stdout.write("Apellido Materno: ");
+      instructor.apellidoMaterno = stdin.readLineSync()!;
+      stdout.write("Materia: ");
+      instructor._materia = stdin.readLineSync()!;
+      stdout.write("Facultad: ");
+      instructor._facultad = stdin.readLineSync()!;
+    }
+  }
+}
+
+// Clase Alumno que hereda de Perfil
+class Alumno extends Perfil {
+  static List<Alumno> _alumnos = [];
+  String _carrera;
+  int _semestre;
+
+  // Constructor de la clase Alumno
+  Alumno(String nombre, String apellidoPaterno, String apellidoMaterno, int id, this._carrera, this._semestre)
+      : super(nombre, apellidoPaterno, apellidoMaterno, id) {
+    _alumnos.add(this);
+  }
+
+  // Setter para la propiedad semestre
+  set semestre(int semestre) => _semestre = semestre;
+
+  // Setter para la propiedad carrera
+  set carrera(String carrera) => _carrera = carrera;
+
+  // Método para mostrar la información del alumno (sobrescribe el método de la clase base)
+  @override
+  void mostrarInformacion() {
+    super.mostrarInformacion();
+    stdout.write("Carrera: $_carrera\nSemestre: $_semestre");
+  }
+
+  // Método estático para buscar un alumno por su ID
+  static Alumno? buscarAlumno(int id) {
+    for (var alumno in _alumnos) {
+      if (alumno.id == id) {
+        return alumno;
+      }
+    }
+    return null;
+  }
+
+  // Método estático para eliminar un alumno por su ID
+  static void eliminarAlumno(int id) {
+    _alumnos.removeWhere((alumno) => alumno.id == id);
+  }
+
+  // Método estático para mostrar todos los alumnos
+  static void mostrarAlumnos() {
+    for (var alumno in _alumnos) {
+      alumno.mostrarInformacion();
+      stdout.write("\n");
+    }
+  }
+
+  // Método estático para editar un alumno por su ID
+  static void editarAlumno(int id) {
+    var alumno = buscarAlumno(id);
+    if (alumno != null) {
+      stdout.write("Nombre: ");
+      alumno.nombre = stdin.readLineSync()!;
+      stdout.write("Apellido Paterno: ");
+      alumno.apellidoPaterno = stdin.readLineSync()!;
+      stdout.write("Apellido Materno: ");
+      alumno.apellidoMaterno = stdin.readLineSync()!;
+      stdout.write("Carrera: ");
+      alumno._carrera = stdin.readLineSync()!;
+      stdout.write("Semestre: ");
+      alumno._semestre = int.parse(stdin.readLineSync()!);
+    }
+  }
+
+  // Método estático para agregar un nuevo alumno con un ID específico
+  static void nuevoAlumno(int id) {
+    var alumnoExistente = buscarAlumno(id);
+  
+    if (alumnoExistente != null) {
+      print('Error: El alumno con el ID $id ya existe.');
+    } else {
+      var nombre = leerCadena("Nombre: ");
+      var apellidoPaterno = leerCadena("Apellido Paterno: ");
+      var apellidoMaterno = leerCadena("Apellido Materno: ");
+      var carrera = leerCadena("Carrera: ");
+      var semestre = leerCadena("Semestre: ");
+    
+      Alumno nuevoAlumno = Alumno(nombre!, apellidoPaterno!, apellidoMaterno!, id, carrera!, int.parse(semestre!));
+    
+      _alumnos.add(nuevoAlumno);
+    
+      print('¡Alumno agregado correctamente!');
+    }
+  }
+}
+
+// Función auxiliar para leer una cadena desde la entrada estándar
+String? leerCadena(String mensaje) {
+  stdout.write(mensaje);
+  return stdin.readLineSync();
+}
+
+// Función que muestra el menú principal
+void menu() {
+  print("A. Agregar directorio");
+  print("B. Mostrar directorios");
+  print("C. Eliminar directorio");
+  print("D. Editar directorio");
+  print("E. Salir");
+  var respuesta = leerCadena("Escoje una Opción: ");
+  switch (respuesta?.toLowerCase()) {
+    case "a":
+      var opcion = leerCadena("1. Agregar alumno\n2. Agregar instructor\n");
+      switch (opcion?.toLowerCase()) {
+        case "1":
+          var id = leerCadena("Id: ");
+          Alumno.nuevoAlumno(int.parse(id!));
+          return menu();
+        case "2":
+          // Código para agregar un instructor
+          break;
+        default:
+          return menu();
+      }
+      break;
+    case "b":
+      // Código para mostrar directorios
+      break;
+    case "c":
+      // Código para eliminar directorio
+      break;
+    case "d":
+      // Código para editar directorio
+      break;
+    case "e":
+      break;
+    default:
+      return menu();
+  }
+}
+
+// Llamada inicial al menú
+void main(List<String> args) {
+  menu();
+}
